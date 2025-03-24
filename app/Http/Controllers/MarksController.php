@@ -33,26 +33,29 @@ class MarksController extends Controller
     // Store new marks
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $request->validate([
             'student_id' => 'required|exists:students,id',
-            'subject_id' => 'required|exists:subjects,id',
-            'exam_type' => 'required|in:Test,Monthly,Annual',
-            'total_marks' => 'required|integer|between:0,100',
-            'exam_date' => 'required|date'
+            'marks' => 'required|array',
+            'marks.*.subject_id' => 'required|exists:subjects,id',
+            'marks.*.exam_type' => 'required',
+            'marks.*.marks_obtained' => 'required|integer|min:0|max:100',
+            'marks.*.exam_date' => 'required|date',
         ]);
-
-        Marks::updateOrCreate(
-            [
+    
+        foreach ($request->marks as $mark) {
+            \App\Models\Marks::create([
                 'student_id' => $request->student_id,
-                'subject_id' => $request->subject_id,
-                'exam_type' => $request->exam_type,
-                'exam_date' => $request->exam_date
-            ],
-            ['total_marks' => $request->total_marks]
-        );
-
-        return redirect()->route('marks.list')->with('success', 'Marks saved successfully!');
+                'subject_id' => $mark['subject_id'],
+                'exam_type' => $mark['exam_type'],
+                'marks_obtained' => $mark['marks_obtained'], // ✅ Correct field
+                'total_marks' => 100, // Change this if needed
+                'exam_date' => $mark['exam_date'],
+            ]);
+        }
+    
+        return redirect()->back()->with('success', 'Marks recorded successfully!');
     }
+    
 
     // Show edit form
     public function edit($id)
@@ -65,12 +68,14 @@ class MarksController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'total_marks' => 'required|integer|between:0,100'
+            'marks_obtained' => 'required|integer|min:0|max:100' // Changed from total_marks
         ]);
-
+    
         $mark = Marks::findOrFail($id);
-        $mark->update(['total_marks' => $request->total_marks]);
-
+        $mark->update([
+            'marks_obtained' => $request->marks_obtained // Update correct field
+        ]);
+    
         return redirect()->route('marks.list')->with('success', 'Marks updated!');
     }
 
@@ -86,5 +91,39 @@ class MarksController extends Controller
     {
         $students = StudentModel::where('class', $classId)->get();
         return response()->json($students);
+    }
+    public function studentReport($student_id)
+    {
+        $student = StudentModel::with(['annualPerformance', 'marks.subject'])
+                    ->findOrFail($student_id);
+    
+        // Yearly breakdown
+        $yearlyData = $student->marks()
+            ->selectRaw('YEAR(exam_date) as year, 
+                        AVG(marks_obtained) as overall_percentage,
+                        COUNT(*) as total_exams')
+            ->groupBy('year')
+            ->orderBy('year', 'desc')
+            ->get();
+    
+        // Subject-wise performance
+        $subjectPerformance = $student->marks()
+            ->with('subject')
+            ->selectRaw('subject_id, 
+                        AVG(marks_obtained) as avg_score,
+                        MIN(marks_obtained) as lowest_score,
+                        MAX(marks_obtained) as highest_score')
+            ->groupBy('subject_id')
+            ->get();
+    
+        // Comparative analysis
+        $classAverages = Marks::selectRaw('YEAR(exam_date) as year, 
+                            subject_id, 
+                            AVG(marks_obtained) as class_avg')
+                        ->groupBy('year', 'subject_id')
+                        ->get()
+                        ->groupBy(['year', 'subject_id']);
+    
+        return view('mark.student-report', compact('student', 'yearlyData', 'subjectPerformance', 'classAverages'));
     }
 }

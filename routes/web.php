@@ -24,45 +24,57 @@ Route::middleware(['Admin'])->group(function () {
     Route::put('admin/edit/{id}', [AdminController::class, "update"]);
     Route::get('admin/delete/{id}', [AdminController::class, "delete"]);
 
-    Route::get('admin/student/report/{student}', [ReportController::class, 'generateReport'])->name('student.report');
+    // Route::get('admin/student/report/{student}', [ReportController::class, 'generateReport'])->name('student.report');
 
     // Manage students
-  // List all students
-Route::get('student/list', [StudentController::class, "list"])->name('student.list');
-// Show the form to add a new student
-Route::get('student/add', [StudentController::class, "add"])->name('student.add');
-// Handle the form submission to add a new student
-Route::post('student/add', [StudentController::class, "store"])->name('student.store');
-// Show the form to edit an existing student
-Route::get('student/edit/{id}', [StudentController::class, "edit"])->name('student.edit');
-// Handle the form submission to update an existing student
-Route::put('student/edit/{id}', [StudentController::class, "update"])->name('student.update');
-// Handle the deletion of a student
-Route::get('student/delete/{id}', [StudentController::class, "delete"])->name('student.delete');
-// Route to fetch students by class
-Route::get('/students/by-class/{class}', [StudentController::class, 'getStudentsByClass']);
+    // List all students
+    Route::get('student/list', [StudentController::class, "list"])->name('student.list');
+    // Show the form to add a new student
+    Route::get('student/add', [StudentController::class, "add"])->name('student.add');
+    // Handle the form submission to add a new student
+    Route::post('student/add', [StudentController::class, "store"])->name('student.store');
+    // Show the form to edit an existing student
+    Route::get('student/edit/{id}', [StudentController::class, "edit"])->name('student.edit');
+    // Handle the form submission to update an existing student
+    Route::put('student/edit/{id}', [StudentController::class, "update"])->name('student.update');
+    // Handle the deletion of a student
+    Route::get('student/delete/{id}', [StudentController::class, "delete"])->name('student.delete');
+    // Route to fetch students by class
+    Route::get('/students/by-class/{class}', [StudentController::class, 'getStudentsByClass']);
 
 
     //Manages Subjects
     Route::get('subject/list', [SubjectController::class, 'list'])->name('subject.list');
+    Route::get('subject/add', [SubjectController::class, 'add'])->name('subject.add');
     Route::post('subject/add', [SubjectController::class, 'store'])->name('subject.store');
     Route::get('subject/edit/{id}', [SubjectController::class, 'edit'])->name('subject.edit');
     Route::put('subject/edit/{id}', [SubjectController::class, 'update'])->name('subject.update');
-    Route::get('subject/delete/{id}', [SubjectController::class, 'destroy'])->name('subject.delete');
+    Route::delete('subject/delete/{id}', [SubjectController::class, 'delete'])->name('subject.delete');
 
 
+    Route::get('/test', [SubjectController::class, 'test'])->name('test');
     //manages marks
-    Route::get('marks/list',[MarksController::class,'list'])->name('marks.list');
-    Route::get('marks/add',[MarksController::class,'add'])->name('marks.add');
-    Route::post('marks/add',[MarksController::class,'store'])->name('marks.store');
+    Route::get('marks/list', [MarksController::class, 'list'])->name('marks.list');
+    Route::get('marks/add', [MarksController::class, 'add'])->name('marks.add');
+    Route::post('marks/add', [MarksController::class, 'store'])->name('marks.store');
     Route::get('marks/edit/{id}', [MarksController::class, 'edit'])->name('marks.edit');
-    Route::put('marks/edit/{id}', [MarksController::class, 'update'])->name('marks.update');    
-    Route::delete('marks/delete/{id}',[MarksController::class,'destroy'])->name('marks.delete');
+    Route::put('/marks/update/{id}', [MarksController::class, 'update'])
+        ->name('marks.update');
+    Route::delete('marks/delete/{id}', [MarksController::class, 'destroy'])->name('marks.delete');
+    Route::get('/student-report/{student}', [MarksController::class, 'studentReport'])
+        ->name('marks.student-report');
+
+    // web.php
+   Route::get('/get-subjects-by-student/{studentId}', [MarksController::class, 'getSubjectsByStudent'])
+->name('getSubjectsByStudent');
 
 });
 
 Route::middleware(['Student'])->group(function () {
     Route::get('student/dashboard', [DashboardController::class, "dashboard"]);
-    
-});
+    // Route::get('/student/dashboard/result/{student}', [DashboardController::class, 'resultview'])
+    //     ->name('student.result');
+        Route::get('/student/marksheet', [StudentController::class, 'marksheet'])
+         ->name('student.marksheet');
 
+});

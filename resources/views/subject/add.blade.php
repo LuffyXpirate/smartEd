@@ -15,19 +15,31 @@
                         </div>
                     @endif
 
-                    <form action="" method="POST">
+                    <form action="{{ route('subject.store') }}" method="POST">
                         @csrf
                         <div class="mb-3">
-                            <label for="name" class="form-label fw-semibold">📘 Subject Name</label>
-                            <input type="text" class="form-control shadow-sm" id="name" name="name" required placeholder="Enter subject name">
+                            <label>Subject Name</label>
+                            <input type="text" name="name" class="form-control" required>
                         </div>
+                    
                         <div class="mb-3">
-                            <label for="code" class="form-label fw-semibold">🔢 Subject Code</label>
-                            <input type="text" class="form-control shadow-sm" id="code" name="code" required placeholder="Enter subject code">
+                            <label>Select Classes</label>
+                            <div class="row">
+                                @foreach(range(5, 10) as $grade)
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" 
+                                           name="classes[]" 
+                                           value="Class {{ $grade }}" 
+                                           id="class{{ $grade }}">
+                                    <label class="form-check-label" for="class{{ $grade }}">
+                                        Class {{ $grade }}
+                                    </label>
+                                </div>
+                                @endforeach
+                            </div>
                         </div>
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-lg shadow-sm">✔ Save Subject</button>
-                        </div>
+                    
+                        <button type="submit" class="btn btn-primary">Save Subject</button>
                     </form>
                 </div>
             </div>

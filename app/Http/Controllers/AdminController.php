@@ -30,7 +30,7 @@ class AdminController extends Controller
         $user->password = Hash::make($request->password);
         $user->user_type=1;
         $user->save();
-        return redirect('admin/list')->with('sucess',"Admin Sucessfully Created");
+        return redirect('admin/list')->with('sucess', "Admin Successfully Created");
     }
     public function edit($id)
     {

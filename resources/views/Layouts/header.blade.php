@@ -125,6 +125,12 @@
                             </p>
                         </a>
                     </li>
+                    <a href="{{ route('student.marksheet') }}" class="btn btn-primary">
+                        <i class="bi bi-file-text"></i> View Full Marksheet
+                    </a>
+                           
+
+                  
                 @endif
             </ul>
             <!--end::Sidebar Menu-->

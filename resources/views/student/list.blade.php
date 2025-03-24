@@ -84,14 +84,11 @@
                                                         class="btn btn-warning btn-sm">Edit</a>
                                                     <a href="{{ url('student/delete/' . $student->id) }}"
                                                         class="btn btn-danger btn-sm"
-                                                        onclick="return confirm('Are you sure you want to delete this student?')">Delete</a>
-                                                    {{-- In your student list view --}}
-                                                <td>
-                                                    <a href="{{ route('student.report', $student->id) }}"
-                                                        class="btn btn-info btn-sm" target="_blank">
-                                                        <i class="fas fa-file-pdf"></i> Generate Report
+                                                        onclick="return confirm('Are you sure?')">Delete</a>
+                                                    <a href="{{ route('marks.student-report', $student->id) }}" 
+                                                       class="btn btn-info btn-sm">
+                                                       View Full Report
                                                     </a>
-                                                </td>
                                                 </td>
                                             </tr>
                                         @endforeach

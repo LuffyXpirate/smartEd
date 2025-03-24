@@ -7,6 +7,10 @@ use App\Models\User;
 use App\Models\StudentModel;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\auth;
+use App\Models\Marks;
+use App\Models\Subject;
+use Carbon\Carbon;
 
 class StudentController extends Controller
 {
@@ -174,4 +178,33 @@ public function predictPerformance(StudentModel $student) {
     
     return view('students.predictions', compact('student', 'predictions'));
 }
+
+public function marksheet()
+{
+    // Ensure user is authenticated
+    if (!Auth::check()) {
+        return redirect()->route('login')->with('error', 'You must be logged in.');
+    }
+
+    // Get the authenticated user's student record
+    $student = Auth::user()->student;
+
+    if (!$student) {
+        return abort(403, 'No student record found for this account.');
+    }
+
+    $marks = Marks::where('student_id', $student->id)
+                ->with('subject')
+                ->get()
+                ->groupBy('exam_type');
+
+    $examTypes = [
+        'term_exam' => 'Term Exam',
+        'annual_exam' => 'Annual Exam', 
+        'weekly_test' => 'Weekly Test'
+    ];
+
+    return view('student.marksheet', compact('student', 'marks', 'examTypes'));
+}
+
 }

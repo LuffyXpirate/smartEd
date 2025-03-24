@@ -22,31 +22,43 @@ class AuthController extends Controller
     }
 
     // Handle login request
-    public function Authlogin(Request $request)
-    {
-        if (!empty($request->email) && !empty($request->password)) {
-            $remember = !empty($request->remember) ? true : false;
-
-            // Attempt authentication
-            if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $remember)) {
-                $user = Auth::user(); // Get authenticated user
-
-                if ($user->user_type == 'admin') {
-                    return redirect('admin/dashboard');
-                } elseif ($user->user_type == 'student') {
-                    return redirect('student/dashboard');
-                }  else {
-                    Auth::logout(); // Logout if user type is invalid
-                    return redirect()->back()->with('error', 'Unauthorized user type.');
-                }
-            } else {
-                // If authentication fails
-                return redirect()->back()->with('error', 'Invalid email or password.');
-            }
-        } else {
-            return redirect()->back()->with('error', 'Email and password are required.');
-        }
-    }
+   // Handle login request
+   public function Authlogin(Request $request)
+   {
+       // Convert email to lowercase
+       $email = strtolower($request->email);
+   
+       // Validate the request
+       $request->validate([
+           'email' => 'required|email|exists:users,email',
+           'password' => 'required|min:6',
+       ], [
+           'email.required' => 'Email is required.',
+           'email.email' => 'Please enter a valid email address.',
+           'email.exists' => 'No account found with this email.',
+           'password.required' => 'Password is required.',
+           'password.min' => 'Password must be at least 6 characters long.',
+       ]);
+   
+       $remember = !empty($request->remember);
+   
+       // Attempt authentication with lowercase email
+       if (Auth::attempt(['email' => $email, 'password' => $request->password], $remember)) {
+           $user = Auth::user();
+   
+           if ($user->user_type == 'admin') {
+               return redirect('admin/dashboard');
+           } elseif ($user->user_type == 'student') {
+               return redirect('student/dashboard');
+           } else {
+               Auth::logout();
+               return redirect()->back()->with('error', 'Unauthorized user type.');
+           }
+       } else {
+           return redirect()->back()->with('error', 'Invalid email or password.');
+       }
+   }
+   
 
     // Handle logout
     public function logout()

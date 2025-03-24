@@ -60,14 +60,41 @@ public function isStudent()
 }
 
     // Relationships
-    public function marks()
-    {
-        return $this->hasMany(Marks::class, 'student_id');
-    }
+    // public function marks()
+    // {
+    //     return $this->hasMany(Marks::class, 'student_id');
+    // }
+    public function getFullNameAttribute()
+{
+    return $this->first_name.' 
+    '.$this->last_name;
+}
+// In StudentModel.php
 
-    public function subjects()
-    {
-        return $this->belongsToMany(Subject::class, 'enrollments', 'student_id', 'subject_id');
-    }
-    
+public function marks()
+{
+    // Explicitly define the foreign key
+    return $this->hasMany(Marks::class, 'student_id');
+}
+
+// Update the annualPerformance relationship
+public function annualPerformance()
+{
+    return $this->hasMany(Marks::class, 'student_id') // Add explicit foreign key
+        ->selectRaw('YEAR(exam_date) as year, AVG(marks_obtained) as percentage')
+        ->groupBy('year')
+        ->orderBy('year', 'desc');
+}
+public function classRelation()
+{
+    return $this->belongsTo(ClassSubject::class, 'class'); // Assuming 'class' is the class_id column
+}
+public function subjects()
+{
+    return $this->belongsToMany(Subject::class, 'student_subject', 'student_id', 'subject_id');
+}
+public function class()
+{
+    return $this->belongsTo(ClassSubject::class, 'class_id');
+}
 }
