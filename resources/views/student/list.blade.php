@@ -85,10 +85,6 @@
                                                     <a href="{{ url('student/delete/' . $student->id) }}"
                                                         class="btn btn-danger btn-sm"
                                                         onclick="return confirm('Are you sure?')">Delete</a>
-                                                    <a href="{{ route('marks.student-report', $student->id) }}" 
-                                                       class="btn btn-info btn-sm">
-                                                       View Full Report
-                                                    </a>
                                                 </td>
                                             </tr>
                                         @endforeach

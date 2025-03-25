@@ -59,8 +59,7 @@
     <div class="sidebar-wrapper">
         <nav class="mt-2">
             <!--begin::Sidebar Menu-->
-            <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="menu"
-                data-accordion="false">
+            <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="menu" data-accordion="false">
 
                 @if (auth::user()->user_type == 'admin')
                     <li class="nav-item menu-open">
@@ -82,7 +81,7 @@
                         </a>
                     </li>
                     <li class="nav-item menu-open">
-                        <a href="{{ url('student/list')}}" class="nav-link active">
+                        <a href="{{ url('student/list') }}" class="nav-link active">
                             <i class="nav-icon bi bi-person-lines-fill"></i>
                             <p>
                                 Manage Students
@@ -91,7 +90,7 @@
                         </a>
                     </li>
                     <li class="nav-item menu-open">
-                        <a href="{{ url('subject/list')}}" class="nav-link">
+                        <a href="{{ url('/subjects') }}" class="nav-link">
                             <i class="nav-icon bi bi-book"></i>
                             <p>
                                 Manage Subjects
@@ -100,17 +99,13 @@
                         </a>
                     </li>
 
-                    <li class="nav-item menu-open">
-                        <a href="{{ url('marks/list')}}" class="nav-link">
-                            <i class="nav-icon bi bi-card-list"></i>
-                            <p>
-                                Manage Marks
-                                <i class="nav-arrow bi bi-chevron-right"></i>
-                            </p>
+                        <i class="nav-icon bi bi-card-list"></i>
+                        <p>
+                            Manage Marks
+                            <i class="nav-arrow bi bi-chevron-right"></i>
+                        </p>
                         </a>
                     </li>
-                    
-                    
                 @elseif (auth::user()->user_type == 'student')
                     <li class="nav-item menu-open">
                         <a href="{{ url('student/dashboard') }}" class="nav-link active">
@@ -120,17 +115,11 @@
                                 <i class="nav-arrow bi bi-chevron-right"></i>
                             </p>
                             <p>
-                               Student
+                                Student
                                 <i class="nav-arrow bi bi-chevron-right"></i>
                             </p>
                         </a>
                     </li>
-                    <a href="{{ route('student.marksheet') }}" class="btn btn-primary">
-                        <i class="bi bi-file-text"></i> View Full Marksheet
-                    </a>
-                           
-
-                  
                 @endif
             </ul>
             <!--end::Sidebar Menu-->

@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-10">
             <div class="card shadow-lg border-0 rounded-3">
-                <div class="card-header bg-gradient text-white text-center" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                <div class="card-header bg-gradient text-white text-center">
                     <h2 class="text-black">Subject List</h2>
                 </div>
                 <div class="card-body">
@@ -30,10 +30,11 @@
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $subject->subject_name }}</td>
                                     <td>
-                                        @foreach($subject->classSubjects as $classSubject)
-                                            <span class="badge bg-primary me-1">
-                                                {{ $classSubject->class }}
-                                            </span>
+                                        @php
+                                            $classes = explode(',', $subject->class);
+                                        @endphp
+                                        @foreach($classes as $class)
+                                            <span class="badge bg-primary me-1">{{ $class }}</span>
                                         @endforeach
                                     </td>
                                     <td>
@@ -41,8 +42,7 @@
                                         <form action="{{ route('subject.delete', $subject->id) }}" method="POST" style="display:inline;">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                            <a href="{{ route('test') }}">test</a>
+                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
                                         </form>
                                     </td>
                                 </tr>

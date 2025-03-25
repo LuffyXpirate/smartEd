@@ -143,68 +143,8 @@ class StudentController extends Controller
         }
     }
 
-    // Get Students by Class (AJAX)
-    public function getStudentsByClass($class)
-    {
-        try {
-            $students = StudentModel::where('class', $class)->get();
-            return response()->json($students);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Failed to fetch students.',
-                'message' => $e->getMessage(),
-            ], 500);
-        }
-    }
-    // StudentController.php
-public function predictPerformance(StudentModel $student) {
-    $predictions = [];
-    
-    foreach($student->subjects as $subject) {
-        $marks = $student->marks()
-            ->where('subject_id', $subject->id)
-            ->orderBy('exam_date', 'desc')
-            ->take(3)
-            ->get();
-            
-        if($marks->count() >= 2) {
-            $trend = ($marks[0]->score - $marks[1]->score) / $marks[1]->score;
-            $predictions[$subject->name] = [
-                'current' => $marks[0]->score,
-                'predicted' => min(100, $marks[0]->score + ($marks[0]->score * $trend))
-            ];
-        }
-    }
-    
-    return view('students.predictions', compact('student', 'predictions'));
+  
+
+   
 }
 
-public function marksheet()
-{
-    // Ensure user is authenticated
-    if (!Auth::check()) {
-        return redirect()->route('login')->with('error', 'You must be logged in.');
-    }
-
-    // Get the authenticated user's student record
-    $student = Auth::user()->student;
-
-    if (!$student) {
-        return abort(403, 'No student record found for this account.');
-    }
-
-    $marks = Marks::where('student_id', $student->id)
-                ->with('subject')
-                ->get()
-                ->groupBy('exam_type');
-
-    $examTypes = [
-        'term_exam' => 'Term Exam',
-        'annual_exam' => 'Annual Exam', 
-        'weekly_test' => 'Weekly Test'
-    ];
-
-    return view('student.marksheet', compact('student', 'marks', 'examTypes'));
-}
-
-}

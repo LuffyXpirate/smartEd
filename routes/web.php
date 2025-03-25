@@ -40,41 +40,22 @@ Route::middleware(['Admin'])->group(function () {
     // Handle the deletion of a student
     Route::get('student/delete/{id}', [StudentController::class, "delete"])->name('student.delete');
     // Route to fetch students by class
-    Route::get('/students/by-class/{class}', [StudentController::class, 'getStudentsByClass']);
 
 
-    //Manages Subjects
-    Route::get('subject/list', [SubjectController::class, 'list'])->name('subject.list');
-    Route::get('subject/add', [SubjectController::class, 'add'])->name('subject.add');
-    Route::post('subject/add', [SubjectController::class, 'store'])->name('subject.store');
-    Route::get('subject/edit/{id}', [SubjectController::class, 'edit'])->name('subject.edit');
-    Route::put('subject/edit/{id}', [SubjectController::class, 'update'])->name('subject.update');
-    Route::delete('subject/delete/{id}', [SubjectController::class, 'delete'])->name('subject.delete');
-
-
-    Route::get('/test', [SubjectController::class, 'test'])->name('test');
-    //manages marks
-    Route::get('marks/list', [MarksController::class, 'list'])->name('marks.list');
-    Route::get('marks/add', [MarksController::class, 'add'])->name('marks.add');
-    Route::post('marks/add', [MarksController::class, 'store'])->name('marks.store');
-    Route::get('marks/edit/{id}', [MarksController::class, 'edit'])->name('marks.edit');
-    Route::put('/marks/update/{id}', [MarksController::class, 'update'])
-        ->name('marks.update');
-    Route::delete('marks/delete/{id}', [MarksController::class, 'destroy'])->name('marks.delete');
-    Route::get('/student-report/{student}', [MarksController::class, 'studentReport'])
-        ->name('marks.student-report');
-
-    // web.php
-   Route::get('/get-subjects-by-student/{studentId}', [MarksController::class, 'getSubjectsByStudent'])
-->name('getSubjectsByStudent');
-
+   // Manages Subjects
+   Route::get('/subjects', [SubjectController::class, 'index'])->name('subject.list');
+   Route::get('/subjects/add', [SubjectController::class, 'create'])->name('subject.add');
+   Route::post('/subjects', [SubjectController::class, 'store'])->name('subject.store');
+   Route::get('/subjects/{subject}/edit', [SubjectController::class, 'edit'])->name('subject.edit');
+   Route::put('/subjects/{subject}', [SubjectController::class, 'update'])->name('subjects.update');
+   Route::delete('/subjects/{subject}', [SubjectController::class, 'destroy'])->name('subject.delete');
 });
+//Manage Marks
 
 Route::middleware(['Student'])->group(function () {
     Route::get('student/dashboard', [DashboardController::class, "dashboard"]);
     // Route::get('/student/dashboard/result/{student}', [DashboardController::class, 'resultview'])
     //     ->name('student.result');
-        Route::get('/student/marksheet', [StudentController::class, 'marksheet'])
-         ->name('student.marksheet');
-
+    Route::get('/student/marksheet', [StudentController::class, 'marksheet'])
+        ->name('student.marksheet');
 });

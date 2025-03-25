@@ -9,8 +9,7 @@
                 <div class="card-header">
                     <div class="card-title">Edit Student</div>
                 </div>
-                <form action="{{ url('student/edit/' . $student->id) }}" method="POST">
-                    @csrf
+                <form method="POST" action="{{ route('subject.update', $subject->id) }}">                    @csrf
                     @method('PUT') <!-- Specify the HTTP method as PUT -->
                     <!--begin::Body-->
                     <div class="card-body">
