@@ -6,20 +6,21 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Request;
 
-class StudentModel extends Model
+class Student extends Model
 {
     use HasFactory;
 
     protected $table = 'students';
 
     protected $fillable = [
-        'user_id', 'first_name', 'last_name', 'roll_no', 'class',
+        'user_id',
+        'first_name',
+        'last_name',
+        'roll_no',
+        'class_id', // Changed from 'class'
+        // ...
     ];
-    
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
+    // Removed duplicate user method
 
     public static function getSingle($id)
     {
@@ -37,8 +38,8 @@ class StudentModel extends Model
             });
         }
 
-        if ($class = Request::get('class')) {
-            $query->where('class', 'LIKE', "%{$class}%");
+        if ($class_id = Request::get('class_id')) {
+            $query->where('class_id', $class_id);
         }
 
         if ($roll_no = Request::get('roll_no')) {
@@ -70,5 +71,24 @@ public function isStudent()
     '.$this->last_name;
 }
 // In StudentModel.php
+// public function studentClass()
+// {
+//     return $this->belongsTo(StudentClass::class, 'class_id');
+// }
+
+public function getClassSubjects()
+{
+    return $this->studentClass->subjects ?? collect();
+}
+public function marks()
+{
+    return $this->hasMany(Marks::class); // Assuming a student has many marks
+}
+public function studentClass()
+    {
+        return $this->belongsTo(StudentClass::class, 'class_id')->withDefault([
+            'class_name' => 'N/A'
+        ]);
+    }
 
 }

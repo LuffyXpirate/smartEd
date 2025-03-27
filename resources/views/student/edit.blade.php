@@ -9,8 +9,9 @@
                 <div class="card-header">
                     <div class="card-title">Edit Student</div>
                 </div>
-                <form method="POST" action="{{ route('subject.update', $subject->id) }}">                    @csrf
-                    @method('PUT') <!-- Specify the HTTP method as PUT -->
+                <form method="POST" action="{{ route('student.update', $student->id) }}">
+                    @csrf
+                    @method('PUT')   method as PUT -->
                     <!--begin::Body-->
                     <div class="card-body">
                         <div class="mb-3">
@@ -26,8 +27,16 @@
                             <input type="text" class="form-control" name="roll_no" value="{{ $student->roll_no }}" required />
                         </div>
                         <div class="mb-3">
-                            <label for="class" class="form-label">Class</label>
-                            <input type="text" class="form-control" name="class" value="{{ $student->class }}" required />
+                            <label for="class_id" class="form-label">Class</label>
+                            <select class="form-select" id="class_id" name="class_id" required>
+                                <option value="">Select Class</option>
+                                @foreach($classes as $class)
+                                    <option value="{{ $class->id }}" 
+                                        {{ $student->class_id == $class->id ? 'selected' : '' }}>
+                                        {{ $class->class_name }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>

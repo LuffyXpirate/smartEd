@@ -8,15 +8,20 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\MarksController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\FrontendController;
 
-Route::get('/', [AuthController::class, "login"]); // Optional: Redirect '/' to the login page
-Route::get('/login', [AuthController::class, "login"]); // Display the login page
-Route::post('/login', [AuthController::class, "authlogin"]); // Handle login form submission
+// Route::get('/', [FrontendController::class, 'index']);
+// Route::get('/frontendpage', [FrontendController::class, 'index']);
+
+// Uncomment or modify the following routes if needed:
+Route::get('/', [AuthController::class, "login"]); 
+Route::post('/login', [AuthController::class, "authlogin"]);
 Route::get('/logout', [AuthController::class, "logout"]);
 
 
 Route::middleware(['Admin'])->group(function () {
     Route::get('admin/dashboard', [DashboardController::class, "dashboard"]);
+
     Route::get('admin/list', [AdminController::class, "list"]);
     Route::get('admin/add', [AdminController::class, "add"]);
     Route::post('admin/add', [AdminController::class, "Addadmin"]);
@@ -43,15 +48,21 @@ Route::middleware(['Admin'])->group(function () {
 
 
    // Manages Subjects
-   Route::get('/subjects', [SubjectController::class, 'index'])->name('subject.list');
-   Route::get('/subjects/add', [SubjectController::class, 'create'])->name('subject.add');
-   Route::post('/subjects', [SubjectController::class, 'store'])->name('subject.store');
-   Route::get('/subjects/{subject}/edit', [SubjectController::class, 'edit'])->name('subject.edit');
-   Route::put('/subjects/{subject}', [SubjectController::class, 'update'])->name('subjects.update');
-   Route::delete('/subjects/{subject}', [SubjectController::class, 'destroy'])->name('subject.delete');
+   Route::resource('subjects', SubjectController::class);
+     Route::get('subjects', [SubjectController::class, 'index'])->name('subjects.index');
+   
+// Students Routes
+// Student Marks Routes
+Route::prefix('students')->name('students.')->group(function () {
+    Route::resource('marks', MarksController::class)->except(['show']);
 });
-//Manage Marks
 
+// All Marks
+Route::resource('marks', MarksController::class);
+Route::get('/marks/{class}/students', [MarksController::class, 'getStudents']);
+Route::get('/marks/{class}/subjects', [MarksController::class, 'getSubjects']);
+
+});
 Route::middleware(['Student'])->group(function () {
     Route::get('student/dashboard', [DashboardController::class, "dashboard"]);
     // Route::get('/student/dashboard/result/{student}', [DashboardController::class, 'resultview'])

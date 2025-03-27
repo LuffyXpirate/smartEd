@@ -27,9 +27,15 @@
                                 placeholder="Search by Name">
                         </div>
                         <div class="col-md-3">
-                            <label for="class" class="form-label">Class</label>
-                            <input type="text" class="form-control" name="class" value="{{ request('class') }}"
-                                placeholder="Search by Class">
+                            <label for="class_id" class="form-label">Class</label>
+                            <select class="form-select" name="class_id">
+                                <option value="">All Classes</option>
+                                @foreach($classes as $class)
+                                    <option value="{{ $class->id }}" {{ request('class_id') == $class->id ? 'selected' : '' }}>
+                                        {{ $class->class_name }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="col-md-3">
                             <label for="roll_no" class="form-label">Roll No</label>
@@ -78,8 +84,7 @@
                                                 <td>{{ $student->first_name }}</td>
                                                 <td>{{ $student->last_name }}</td>
                                                 <td>{{ $student->roll_no }}</td>
-                                                <td>{{ $student->class }}</td>
-                                                <td>
+                                                <td>{{ $student->studentClass->class_name ?? 'N/A' }}</td>                                                <td>
                                                     <a href="{{ url('student/edit/' . $student->id) }}"
                                                         class="btn btn-warning btn-sm">Edit</a>
                                                     <a href="{{ url('student/delete/' . $student->id) }}"

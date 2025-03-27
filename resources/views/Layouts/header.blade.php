@@ -97,13 +97,13 @@
                                 <i class="nav-arrow bi bi-chevron-right"></i>
                             </p>
                         </a>
-                    </li>
 
-                        <i class="nav-icon bi bi-card-list"></i>
-                        <p>
-                            Manage Marks
-                            <i class="nav-arrow bi bi-chevron-right"></i>
-                        </p>
+
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('marks.index') }}">
+                            <i class="nav-icon bi bi-pencil-square"></i>
+                            <p>Manage Marks</p>
                         </a>
                     </li>
                 @elseif (auth::user()->user_type == 'student')
