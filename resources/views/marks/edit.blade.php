@@ -66,11 +66,9 @@
             </select>
 
             <div class="col-md-4">
-                <div class="form-group">
-                    <label>Exam Date</label>
-                    <input type="date" name="exam_date" class="form-control" 
-                           value="{{ $mark->exam_date->format('Y-m-d') }}" required>
-                </div>
+                <input type="date" name="exam_date" class="form-control" 
+                value="{{ \Carbon\Carbon::parse($mark->exam_date)->format('Y-m-d') }}" required>
+         
             </div>
         </div>
 

@@ -11,17 +11,15 @@ class Subject extends Model
 
     protected $fillable = ['subject_name'];
 
+    // Relationship with classes (many-to-many)
     public function classes()
     {
-        return $this->belongsToMany(StudentClass::class, 'subject_class', 'subject_id', 'class_id');
+        return $this->belongsToMany(ClassModel::class, 'class_subject', 'subject_id', 'class_id');
     }
-    public function studentClass()
-{
-    return $this->belongsTo(StudentClass::class, 'class_id');
-}
-
-public function marks()
-{
-    return $this->hasMany(Marks::class);
-}
+    // Accessor to get associated class names as string
+    public function getAssociatedClassesAttribute()
+    {
+        return $this->classes->pluck('class_name')->implode(' ');
+    }
+    
 }

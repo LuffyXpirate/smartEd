@@ -84,11 +84,21 @@ public function marks()
 {
     return $this->hasMany(Marks::class); // Assuming a student has many marks
 }
-public function studentClass()
-    {
-        return $this->belongsTo(StudentClass::class, 'class_id')->withDefault([
-            'class_name' => 'N/A'
-        ]);
-    }
 
+
+public function studentClass()
+{
+    return $this->belongsTo(Classes::class, 'class_id')->withDefault([
+        'class_name' => 'N/A'
+    ]);
+}
+public function user()
+{
+    return $this->belongsTo(User::class);
+}
+
+public function class()
+{
+    return $this->belongsTo(StudentClass::class, 'class_id');
+}
 }

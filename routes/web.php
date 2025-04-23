@@ -49,8 +49,6 @@ Route::middleware(['Admin'])->group(function () {
 
    // Manages Subjects
    Route::resource('subjects', SubjectController::class);
-     Route::get('subjects', [SubjectController::class, 'index'])->name('subjects.index');
-   
 // Students Routes
 // Student Marks Routes
 Route::prefix('students')->name('students.')->group(function () {
@@ -59,9 +57,8 @@ Route::prefix('students')->name('students.')->group(function () {
 
 // All Marks
 Route::resource('marks', MarksController::class);
-Route::get('/marks/{class}/students', [MarksController::class, 'getStudents']);
-Route::get('/marks/{class}/subjects', [MarksController::class, 'getSubjects']);
-
+Route::get('/marks/{classId}/students', [MarksController::class, 'getStudents']);
+Route::get('/marks/{classId}/subjects', [MarksController::class, 'getSubjects']);
 });
 Route::middleware(['Student'])->group(function () {
     Route::get('student/dashboard', [DashboardController::class, "dashboard"]);

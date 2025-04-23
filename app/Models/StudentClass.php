@@ -6,15 +6,22 @@ use Illuminate\Database\Eloquent\Model;
 
 class StudentClass extends Model
 {
-    protected $table = 'classes';
-    protected $fillable = ['class_name'];
+    protected $table = 'student_classes';
 
-    // public function subjects()
-    // {
-    //     return $this->belongsToMany(Subject::class, 'subject_class', 'class_id', 'subject_id');
-    // }
-    public function subjects()
+    protected $fillable = ['student_id', 'class_id', 'academic_year_id'];
+
+    public function class()
+    {
+        return $this->belongsTo(ClassModel::class, 'class_id');
+    }
+
+    // Accessor to get class_name through the relationship
+    public function getClassNameAttribute()
+    {
+        return $this->class->class_name ?? null;
+    }
+    public function students()
 {
-    return $this->belongsToMany(Subject::class, 'subject_class');
+    return $this->hasMany(Student::class, 'class_id');
 }
 }

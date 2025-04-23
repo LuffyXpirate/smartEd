@@ -9,17 +9,11 @@ class ClassModel extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['class_name'];
+    protected $table = 'classes';
+    protected $fillable = ['class_name', 'academic_year'];
 
-    // Relationship with students (One-to-Many)
-    public function students()
-    {
-        return $this->hasMany(StudentModel::class, 'class_id'); // Assuming you have a 'class_id' in your students table
-    }
-
-    // Relationship with subjects (Many-to-Many)
     public function subjects()
     {
-        return $this->belongsToMany(Subject::class, 'class_subjects');
+        return $this->belongsToMany(Subject::class, 'class_subject', 'class_id', 'subject_id');
     }
 }

@@ -68,17 +68,18 @@ class User extends Authenticatable
 
     public function student()
     {
-        return $this->hasOne(StudentModel::class);
+        return $this->hasOne(Student::class);
     }
 
     // Relationships
     public function students()
     {
-        return $this->hasMany(StudentModel::class, 'user_id');
+        return $this->hasMany(Student::class, 'user_id');
     }
 
     public function subjects()
     {
         return $this->hasMany(Subject::class, 'assigned_to'); // Teacher is assigned subjects
     }
+    
 }

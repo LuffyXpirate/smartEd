@@ -9,5 +9,4 @@ class ClassSubject extends Model
 {
     public $timestamps = false;
     protected $table = 'class_subject';
-    protected $fillable = ['subject_id', 'class'];
-}
+    protected $fillable = ['subject_id', 'class_id'];}

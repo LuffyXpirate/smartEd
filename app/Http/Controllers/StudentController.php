@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Student;
+use App\Models\ClassModel;
+
 use App\Models\StudentClass;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -20,14 +22,17 @@ class StudentController extends Controller
     public function list()
     {
         $students = Student::with('studentClass')->paginate(10);
-        $classes = StudentClass::orderBy('class_name')->get();
+        
+        // Get classes from the CORRECT model/table
+        $classes = ClassModel::orderBy('class_name')->get(); 
+        
         return view('student.list', compact('students', 'classes'));
     }
 
     // Show Add Student Form
     public function add()
     {
-        $classes = StudentClass::orderBy('class_name')->get(); // Get all classes
+        $classes = StudentClass::orderBy('class')->get(); // Get all classes
         return view('student.add', compact('classes')); 
     }
 
@@ -72,7 +77,7 @@ class StudentController extends Controller
     public function edit($id)
     {
         $student = Student::with(['user', 'studentClass'])->findOrFail($id);
-        $classes = StudentClass::orderBy('class_name')->get();
+        $classes = ClassModel::orderBy('class_name')->get(); 
         return view('student.edit', compact('student', 'classes'));
     }
 
