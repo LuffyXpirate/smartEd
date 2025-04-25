@@ -22,7 +22,7 @@
                     <th>Exam Type</th>
                     <th>Exam Date</th>
                     <th>Actions</th>
-                </tr>
+                </tr>                                               
             </thead>
             <tbody>
                 @foreach($marks as $mark)
@@ -30,7 +30,7 @@
                     <td class="text-center">{{ $mark->id }}</td>
                     <td>{{ $mark->student->first_name }} {{ $mark->student->last_name }}</td>
                     <td>{{ $mark->subject->subject_name ?? 'N/A' }}</td>
-                    <td>{{ $mark->student->studentClass->class_name ?? 'N/A' }}</td>
+                    <td>{{ $mark->student->class->class_name ?? 'N/A' }}</td>
                     <td class="text-center fw-semibold text-primary">{{ $mark->marks_obtained }}</td>
                     <td class="text-center">
                         <span class="badge bg-info text-dark text-capitalize">

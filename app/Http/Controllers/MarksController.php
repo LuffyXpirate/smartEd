@@ -2,103 +2,126 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ClassModel;
 use App\Models\Marks;
 use App\Models\Student;
 use App\Models\Subject;
+use App\Models\StudentClass;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-
+use Illuminate\Validation\Rule;
+use App\Models\ClassModel;
 class MarksController extends Controller
 {
-    // Display all marks
     public function index()
     {
-        $marks = Marks::with(['student', 'subject', 'student.class'])->paginate(10);
+        $marks = Marks::with(['student.studentClass', 'subject'])
+            ->paginate(10);
         return view('marks.index', compact('marks'));
     }
-    // Show form to create new marks
+
     public function create()
     {
-        $classes = ClassModel::orderBy('class_name')->get();
+        $classes = StudentClass::all();
         $examTypes = ['First Term', 'Second Term', 'Third Term', 'Final'];
         return view('marks.create', compact('classes', 'examTypes'));
     }
 
-    // Store new marks
     public function store(Request $request)
     {
-        $request->validate([
-            'student_id' => 'required|exists:students,id',
-            'class_id' => 'required|exists:classes,id', // Added class_id validation
+        $validated = $request->validate([
+            'student_id' => [
+                'required',
+                'exists:students,id',
+                Rule::unique('marks')->where(function ($query) use ($request) {
+                    return $query->where('subject_id', $request->subject_id)
+                        ->where('exam_type', $request->exam_type);
+                })
+            ],
             'subject_id' => 'required|exists:subjects,id',
+            'class_id' => 'required|exists:classes,id', // Add this
             'marks_obtained' => 'required|integer|min:0|max:100',
-            'exam_type' => 'required|in:First Term,Second Term,Third Term,Final',
+            'exam_type' => [
+                'required',
+                'string',
+                Rule::in(['First Term', 'Second Term', 'Third Term', 'Final']),
+            ],
             'exam_date' => 'required|date',
+        ], [
+            'student_id.unique' => 'This student already has marks recorded for this subject and exam type.',
+            'exam_type.in' => 'The exam type must be one of: First Term, Second Term, Third Term, Final.',
         ]);
-
-        try {
-            // Create marks with all required fields
-            Marks::create([
-                'student_id' => $request->student_id,
-                'class_id' => $request->class_id, // Include class_id
-                'subject_id' => $request->subject_id,
-                'marks_obtained' => $request->marks_obtained,
-                'exam_type' => $request->exam_type,
-                'exam_date' => $request->exam_date
-            ]);
-            
-            return redirect()->route('marks.index')->with('success', 'Marks added successfully!');
-        } catch (\Exception $e) {
-            Log::error('Error saving marks: ' . $e->getMessage());
-            return back()->withInput()->with('error', 'Error saving marks. Please try again.');
-        }
+    
+        Marks::create($validated);
+    
+        return redirect()->route('marks.index')->with('success', 'Marks added successfully!');
     }
-    // Show form to edit marks
+    
     public function edit(Marks $mark)
     {
-        $classes = ClassModel::all();
-        $examTypes = ['First Term', 'Second Term', 'Third Term', 'Final'];
-        $students = Student::where('class_id', $mark->student->class_id)->get();
-        $subjects = Subject::all();
+        $mark->load(['student.studentClass', 'subject', 'studentClass']);
         
+        $classes = StudentClass::all();
+        $examTypes = ['First Term', 'Second Term', 'Third Term', 'Final'];
+        $students = Student::where('class_id', $mark->class_id)->get();
+        
+        $subjects = Subject::whereHas('classes', function($q) use ($mark) {
+            $q->where('class_id', $mark->class_id);
+        })->get();
+    
         return view('marks.edit', compact('mark', 'classes', 'examTypes', 'students', 'subjects'));
     }
-
-    // Update existing marks
     public function update(Request $request, Marks $mark)
     {
-        $request->validate([
-            'student_id' => 'required|exists:students,id',
+        $validated = $request->validate([
+            'student_id' => [
+                'required',
+                'exists:students,id',
+                Rule::unique('marks')->where(function ($query) use ($request, $mark) {
+                    return $query->where('subject_id', $request->subject_id)
+                        ->where('exam_type', $request->exam_type)
+                        ->where('id', '!=', $mark->id); // Ignore current record
+                })
+            ],
             'subject_id' => 'required|exists:subjects,id',
+            'class_id' => 'required|exists:classes,id',
             'marks_obtained' => 'required|integer|min:0|max:100',
-            'exam_type' => 'required|in:First Term,Second Term,Third Term,Final',
+            'exam_type' => [
+                'required',
+                'string',
+                Rule::in(['First Term', 'Second Term', 'Third Term', 'Final']),
+            ],
             'exam_date' => 'required|date',
+        ], [
+            'student_id.unique' => 'This student already has marks recorded for this subject and exam type.',
+            'exam_type.in' => 'The exam type must be one of: First Term, Second Term, Third Term, Final.',
         ]);
-
-        $mark->update($request->all());
+    
+        $mark->update($validated);
+    
         return redirect()->route('marks.index')->with('success', 'Marks updated successfully!');
     }
-
-    // Delete marks
+    
     public function destroy(Marks $mark)
     {
         $mark->delete();
         return redirect()->route('marks.index')->with('success', 'Marks deleted successfully!');
     }
 
-    // Get students by class (AJAX)
-    public function getStudents($classId)
+    public function getSubjectsByClassId($classId)
     {
-        return Student::where('class_id', $classId)
-            ->get(['id', 'first_name', 'last_name', 'roll_no']);
+        $class = StudentClass::with('subjects')->findOrFail($classId);
+        return response()->json($class->subjects);
     }
 
-    // Get subjects by class (AJAX)
+public function getStudents($classId)
+    {
+        $students = Student::where('class_id', $classId)
+            ->get(['id', 'first_name', 'last_name', 'roll_no']);
+            
+        return response()->json($students);
+    }
     public function getSubjects($classId)
     {
-        return Subject::whereHas('classes', function($q) use ($classId) {
-            $q->where('class_id', $classId);
-        })->get(['id', 'subject_name']);
+        $class = StudentClass::with('subjects')->findOrFail($classId);
+        return response()->json($class->subjects);
     }
 }

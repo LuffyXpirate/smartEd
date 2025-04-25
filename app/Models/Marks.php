@@ -18,18 +18,26 @@ class Marks extends Model
         'exam_date'
     ];
 
+    public const EXAM_TYPES = [
+        'Midterm',
+        'Final',
+        'Quiz',
+        'Assignment'
+    ];
     public function student()
     {
         return $this->belongsTo(Student::class);
     }
 
-    public function class()
-    {
-        return $this->belongsTo(ClassModel::class, 'class_id');
-    }
+  
 
-    public function subject()
-    {
-        return $this->belongsTo(Subject::class);
-    }
+public function subject()
+{
+    return $this->belongsTo(Subject::class);
+}
+
+public function class()
+{
+    return $this->belongsTo(StudentClass::class, 'class_id');
+}
 }

@@ -84,12 +84,16 @@
                                                 <td>{{ $student->first_name }}</td>
                                                 <td>{{ $student->last_name }}</td>
                                                 <td>{{ $student->roll_no }}</td>
-                                                <td>{{ $student->studentClass->class_name ?? 'N/A' }}</td>                                                <td>
+                                                <td>{{ $student->class->class_name ?? 'N/A' }}</td>
+                                                <td>
                                                     <a href="{{ url('student/edit/' . $student->id) }}"
                                                         class="btn btn-warning btn-sm">Edit</a>
                                                     <a href="{{ url('student/delete/' . $student->id) }}"
                                                         class="btn btn-danger btn-sm"
                                                         onclick="return confirm('Are you sure?')">Delete</a>
+                                                        <a href="{{ route('students.report', $student->id) }}" class="btn btn-primary">
+                                                            View My Progress Report
+                                                        </a>
                                                 </td>
                                             </tr>
                                         @endforeach

@@ -80,25 +80,43 @@ public function getClassSubjects()
 {
     return $this->studentClass->subjects ?? collect();
 }
-public function marks()
-{
-    return $this->hasMany(Marks::class); // Assuming a student has many marks
-}
 
 
-public function studentClass()
-{
-    return $this->belongsTo(Classes::class, 'class_id')->withDefault([
-        'class_name' => 'N/A'
-    ]);
-}
 public function user()
 {
     return $this->belongsTo(User::class);
 }
 
+
+public function marks()
+{
+    return $this->hasMany(Marks::class);
+}
+
+public function studentClass()
+{
+    return $this->belongsTo(StudentClass::class, 'class_id')->with('subjects');
+}
+
+// public function classHistory()
+// {
+//     return $this->hasMany(StudentClass::class, 'student_id');
+// }
+public function currentClass()
+{
+    return $this->belongsTo(StudentClass::class, 'current_class_id');
+}
 public function class()
 {
-    return $this->belongsTo(StudentClass::class, 'class_id');
+    return $this->belongsTo(ClassModel::class, 'class_id');
 }
+public function classHistory()
+{
+    return $this->hasMany(ClassHistory::class);
+}
+
+
+
+
+
 }

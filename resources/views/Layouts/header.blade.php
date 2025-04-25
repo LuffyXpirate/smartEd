@@ -120,6 +120,12 @@
                             </p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('my.report') }}">
+                            <i class="nav-icon bi bi-pencil-square"></i>
+                            <p>Manage Marks</p>
+                        </a>
+                    </li>
                 @endif
             </ul>
             <!--end::Sidebar Menu-->

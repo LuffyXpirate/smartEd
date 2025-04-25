@@ -24,7 +24,7 @@ class StudentController extends Controller
         $students = Student::with('studentClass')->paginate(10);
         
         // Get classes from the CORRECT model/table
-        $classes = ClassModel::orderBy('class_name')->get(); 
+        $classes = ClassModel::orderBy('class_name')->get(); // ✅ correct
         
         return view('student.list', compact('students', 'classes'));
     }
@@ -32,7 +32,7 @@ class StudentController extends Controller
     // Show Add Student Form
     public function add()
     {
-        $classes = StudentClass::orderBy('class')->get(); // Get all classes
+        $classes = ClassModel::orderBy('class_name')->get(); // ✅ correct
         return view('student.add', compact('classes')); 
     }
 
