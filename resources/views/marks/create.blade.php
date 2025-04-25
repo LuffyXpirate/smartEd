@@ -11,13 +11,13 @@
                 @csrf
 
                 <div class="row g-3 mb-4">
-                    <!-- Class Selection -->
+                    <!-- Class Selection - Now includes name attribute -->
                     <div class="col-md-4">
                         <label for="class_id" class="form-label">Class</label>
                         <select id="class_id" name="class_id" class="form-select" required>
                             <option value="">Select Class</option>
                             @foreach($classes as $class)
-                                <option value="{{ $class->id }}">{{ $class->class_name }}</option>
+                                <option value="{{ $class->id }}">Class {{ $class->class_name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -40,7 +40,6 @@
                 </div>
 
                 <div class="row g-3 mb-4">
-                    <!-- Exam Type -->
                     <div class="col-md-4">
                         <label for="exam_type" class="form-label">Exam Type</label>
                         <select name="exam_type" id="exam_type" class="form-select" required>
@@ -51,21 +50,18 @@
                         </select>
                     </div>
                     
-                    <!-- Marks Obtained -->
                     <div class="col-md-4">
                         <label for="marks_obtained" class="form-label">Marks Obtained</label>
                         <input type="number" class="form-control" name="marks_obtained" 
                                id="marks_obtained" min="0" max="100" required>
                     </div>
                     
-                    <!-- Exam Date -->
                     <div class="col-md-4">
                         <label for="exam_date" class="form-label">Exam Date</label>
                         <input type="date" class="form-control" name="exam_date" id="exam_date" required>
                     </div>
                 </div>
 
-                <!-- Submit Button -->
                 <div class="mt-4">
                     <button type="submit" class="btn btn-success w-100">
                         <i class="fas fa-save me-2"></i>Save Marks
@@ -85,53 +81,34 @@ document.addEventListener('DOMContentLoaded', function() {
     classSelect.addEventListener('change', function() {
         const classId = this.value;
         
-        // Reset and disable dependent fields
-        [studentSelect, subjectSelect].forEach(select => {
-            select.innerHTML = '<option value="">Loading...</option>';
-            select.disabled = true;
-        });
-
         if (!classId) {
-            [studentSelect, subjectSelect].forEach(select => {
-                select.innerHTML = '<option value="">Select Class First</option>';
-                select.disabled = true;
-            });
+            studentSelect.innerHTML = '<option value="">Select Class First</option>';
+            subjectSelect.innerHTML = '<option value="">Select Class First</option>';
+            studentSelect.disabled = subjectSelect.disabled = true;
             return;
         }
 
-        // Fetch students for selected class
-        fetch(`/api/classes/${classId}/students`)
+        // Fetch students
+        fetch(`/marks/${classId}/students`)
             .then(response => response.json())
             .then(students => {
-                studentSelect.innerHTML = students.length 
-                    ? '<option value="">Select Student</option>' 
-                    : '<option value="">No students found</option>';
-                
+                let options = '<option value="">Select Student</option>';
                 students.forEach(student => {
-                    studentSelect.innerHTML += `
-                        <option value="${student.id}">
-                            ${student.full_name} (${student.roll_no})
-                        </option>
-                    `;
+                    options += `<option value="${student.id}">${student.first_name} ${student.last_name}</option>`;
                 });
+                studentSelect.innerHTML = options;
                 studentSelect.disabled = false;
             });
 
-        // Fetch subjects for selected class
-        fetch(`/api/classes/${classId}/subjects`)
+        // Fetch subjects
+        fetch(`/marks/${classId}/subjects`)
             .then(response => response.json())
             .then(subjects => {
-                subjectSelect.innerHTML = subjects.length 
-                    ? '<option value="">Select Subject</option>' 
-                    : '<option value="">No subjects found</option>';
-                
+                let options = '<option value="">Select Subject</option>';
                 subjects.forEach(subject => {
-                    subjectSelect.innerHTML += `
-                        <option value="${subject.id}">
-                            ${subject.subject_name}
-                        </option>
-                    `;
+                    options += `<option value="${subject.id}">${subject.subject_name}</option>`;
                 });
+                subjectSelect.innerHTML = options;
                 subjectSelect.disabled = false;
             });
     });
